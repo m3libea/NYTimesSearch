@@ -19,6 +19,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.adapters.ArticleArrayAdapter;
+import com.m3libea.nytimessearch.external.EndlessScrollListener;
 import com.m3libea.nytimessearch.models.Article;
 
 import org.json.JSONArray;
@@ -37,6 +38,8 @@ public class SearchActivity extends AppCompatActivity {
 
     ArrayList<Article> articles;
     ArticleArrayAdapter adapter;
+
+    String queryS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -70,6 +73,16 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        gvResults.setOnScrollListener(new EndlessScrollListener(){
+
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                apiQuery(queryS, page);
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -85,7 +98,8 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
 
-                apiQuery(query);
+                apiQuery(query, 0);
+                queryS = query;
 
                 return true;
             }
@@ -106,20 +120,20 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_filter) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void apiQuery(String query) {
+    public void apiQuery(String query, int page) {
 
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
         RequestParams params = new RequestParams();
         params.put("api-key", "7217c0ccb50a41d198c730e132230c0a");
-        params.put("page", 0);
+        params.put("page", page);
         params.put("q", query);
 
         client.get(url, params, new JsonHttpResponseHandler(){
