@@ -1,6 +1,9 @@
 package com.m3libea.nytimessearch.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -51,6 +55,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
         setUpViews();
+
     }
 
     public void setUpViews(){
@@ -98,6 +103,8 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
 
+                clearList();
+
                 apiQuery(query, 0);
                 queryS = query;
 
@@ -129,6 +136,12 @@ public class SearchActivity extends AppCompatActivity {
 
     public void apiQuery(String query, int page) {
 
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, "Network not Available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
         RequestParams params = new RequestParams();
@@ -152,5 +165,18 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    private void clearList() {
+        int size = articles.size();
+        articles.clear();
+        adapter.notifyDataSetChanged();
     }
 }
