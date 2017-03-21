@@ -24,7 +24,7 @@ public class ArticleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Article article = (Article)getIntent().getSerializableExtra("article");
+        final Article article = (Article)getIntent().getParcelableExtra("article");
 
         ButterKnife.bind(this);
 

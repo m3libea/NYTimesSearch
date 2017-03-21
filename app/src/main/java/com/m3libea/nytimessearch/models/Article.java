@@ -3,15 +3,16 @@ package com.m3libea.nytimessearch.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by m3libea on 3/13/17.
  */
 
-public class Article implements Serializable {
+@Parcel
+public class Article {
 
     String webURL;
     String headline;
@@ -29,6 +30,8 @@ public class Article implements Serializable {
         return thumbNail;
     }
 
+    public Article() {
+    }
 
     public Article(JSONObject jsonObject){
         try {
