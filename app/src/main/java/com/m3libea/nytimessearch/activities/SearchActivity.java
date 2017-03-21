@@ -180,4 +180,6 @@ public class SearchActivity extends AppCompatActivity {
         articles.clear();
         adapter.notifyDataSetChanged();
     }
+
+
 }
