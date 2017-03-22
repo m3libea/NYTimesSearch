@@ -9,24 +9,23 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.adapters.ArticleArrayAdapter;
 import com.m3libea.nytimessearch.external.EndlessScrollListener;
-import com.m3libea.nytimessearch.models.Article;
+import com.m3libea.nytimessearch.models.Doc;
+import com.m3libea.nytimessearch.models.NYTimesResponse;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class SearchActivity extends AppCompatActivity {
 
     @BindView(R.id.gvResults) GridView gvResults;
 
-    ArrayList<Article> articles;
+    ArrayList<Doc> articles;
     ArticleArrayAdapter adapter;
 
     String queryS;
@@ -68,9 +67,9 @@ public class SearchActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
             //get article to display
 
-            Article article = articles.get(position);
+            Doc doc = articles.get(position);
             //pass in that article into intent
-            i.putExtra("article", Parcels.wrap(article));
+            i.putExtra("article", Parcels.wrap(doc));
             //launch activity
             startActivity(i);
         });
@@ -145,22 +144,20 @@ public class SearchActivity extends AppCompatActivity {
         params.put("page", page);
         params.put("q", query);
 
-        client.get(url, params, new JsonHttpResponseHandler(){
+        client.get(url, params, new TextHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                JSONArray articlesJsonResults = null;
-                try {
-                    articlesJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    articles.addAll(Article.fromJSONArray(articlesJsonResults));
-                    Log.d("DEBUG", articles.toString());
-                    adapter.notifyDataSetChanged();
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
+            }
 
-                } catch (JSONException e){
-                    e.printStackTrace();
-                }
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Gson gson = new GsonBuilder().create();
+                articles.addAll(gson.fromJson(responseString, NYTimesResponse.class).getResponse().getDocs());
+                adapter.notifyDataSetChanged();
             }
         });
+
     }
 
     private Boolean isNetworkAvailable() {

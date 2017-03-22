@@ -14,7 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.m3libea.nytimessearch.R;
-import com.m3libea.nytimessearch.models.Article;
+import com.m3libea.nytimessearch.models.Doc;
 
 import org.parceler.Parcels;
 
@@ -32,19 +32,19 @@ public class ArticleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Article article = (Article) Parcels.unwrap(getIntent().getParcelableExtra("article"));
+        final Doc article = (Doc) Parcels.unwrap(getIntent().getParcelableExtra("article"));
 
         ButterKnife.bind(this);
 
         wbView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    view.loadUrl(article.getWebURL());
+                    view.loadUrl(article.getWebUrl());
                     return true;
             }
         });
 
-        wbView.loadUrl(article.getWebURL());
+        wbView.loadUrl(article.getWebUrl());
     }
 
     @Override
