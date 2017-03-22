@@ -13,8 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -65,19 +63,16 @@ public class SearchActivity extends AppCompatActivity {
         adapter = new ArticleArrayAdapter(this, articles);
         gvResults.setAdapter(adapter);
 
-        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Create intent
-                Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-                //get article to display
+        gvResults.setOnItemClickListener((parent, view, position, id) -> {
+            //Create intent
+            Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
+            //get article to display
 
-                Article article = articles.get(position);
-                //pass in that article into intent
-                i.putExtra("article", Parcels.wrap(article));
-                //launch activity
-                startActivity(i);
-            }
+            Article article = articles.get(position);
+            //pass in that article into intent
+            i.putExtra("article", Parcels.wrap(article));
+            //launch activity
+            startActivity(i);
         });
 
         gvResults.setOnScrollListener(new EndlessScrollListener(){
