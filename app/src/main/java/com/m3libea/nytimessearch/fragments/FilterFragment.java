@@ -1,7 +1,9 @@
 package com.m3libea.nytimessearch.fragments;
 
+import android.app.DatePickerDialog;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.Display;
 import android.view.Gravity;
@@ -10,12 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.DatePicker;
+import android.widget.TextView;
 
 import com.m3libea.nytimessearch.R;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 
-public class FilterFragment extends DialogFragment {
 
+public class FilterFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
+
+    TextView tvDate;
+    DateFormat df;
     public FilterFragment() {
         // Required empty public constructor
     }
@@ -29,9 +38,21 @@ public class FilterFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+
         // Inflate the layout for this fragment
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         return inflater.inflate(R.layout.fragment_filter, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        tvDate = (TextView) view.findViewById(R.id.tvDate);
+        tvDate.setText(df.format(Calendar.getInstance().getTime()));
+
+        tvDate.setOnClickListener(v -> showDatePickerDialog(v));
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -49,4 +70,21 @@ public class FilterFragment extends DialogFragment {
         super.onResume();
     }
 
+    // attach to an onclick handler to show the date picker
+    public void showDatePickerDialog(View v) {
+        DataPickerFragment newFragment = new DataPickerFragment();
+        newFragment.show(getChildFragmentManager(), "dataPicker");
+    }
+
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        // store the values selected into a Calendar instance
+        final Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        tvDate.setText(df.format(c.getTime()));
+    }
 }
