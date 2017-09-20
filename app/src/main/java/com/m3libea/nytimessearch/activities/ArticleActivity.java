@@ -4,14 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.models.Doc;
@@ -32,7 +32,7 @@ public class ArticleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final Doc article = (Doc) Parcels.unwrap(getIntent().getParcelableExtra("article"));
+        final Doc article = Parcels.unwrap(getIntent().getParcelableExtra("article"));
 
         ButterKnife.bind(this);
 

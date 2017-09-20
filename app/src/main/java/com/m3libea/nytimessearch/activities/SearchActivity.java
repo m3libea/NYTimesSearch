@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -22,6 +23,7 @@ import com.m3libea.nytimessearch.NYTimesEndpoint;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.adapters.ArticleArrayAdapter;
 import com.m3libea.nytimessearch.external.EndlessScrollListener;
+import com.m3libea.nytimessearch.fragments.FilterFragment;
 import com.m3libea.nytimessearch.models.Doc;
 
 import org.parceler.Parcels;
@@ -126,10 +128,17 @@ public class SearchActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_filter) {
+            showFilterDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showFilterDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        FilterFragment filterFragment = FilterFragment.newInstance();
+        filterFragment.show(fm, "fragment_filter");
     }
 
     public void apiQuery(String query, int page) {
@@ -155,22 +164,6 @@ public class SearchActivity extends AppCompatActivity {
                         throwable -> Log.e("SearchActivity", "failure getting doc", throwable),
                         () -> Log.i("SearchActivity", "done!!!")
                 );
-
-
-//        client.get(url, params, new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                Gson gson = new GsonBuilder().create();
-//                articles.addAll(gson.fromJson(responseString, NYTimesResponse.class).getResponse().getDocs());
-//                adapter.notifyDataSetChanged();
-//            }
-//        });
-
     }
 
     private Boolean isNetworkAvailable() {
