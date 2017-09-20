@@ -127,12 +127,14 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_filter) {
-            showFilterDialog();
-            return true;
-        }
 
-        return super.onOptionsItemSelected(item);
+        switch (id) {
+            case R.id.action_filter:
+                showFilterDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void showFilterDialog() {
