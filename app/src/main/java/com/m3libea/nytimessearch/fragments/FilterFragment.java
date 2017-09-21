@@ -20,10 +20,14 @@ import com.m3libea.nytimessearch.R;
 import java.text.DateFormat;
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class FilterFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
 
-    TextView tvDate;
+    @BindView(R.id.tvDate) TextView tvDate;
+
     DateFormat df;
     public FilterFragment() {
         // Required empty public constructor
@@ -40,15 +44,18 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
                              Bundle savedInstanceState) {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM);
 
+        View view = inflater.inflate(R.layout.fragment_filter, container, false);
+
+        ButterKnife.bind(this, view);
+
         // Inflate the layout for this fragment
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        return inflater.inflate(R.layout.fragment_filter, container, false);
+        return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        tvDate = (TextView) view.findViewById(R.id.tvDate);
         tvDate.setText(df.format(Calendar.getInstance().getTime()));
 
         tvDate.setOnClickListener(v -> showDatePickerDialog(v));
