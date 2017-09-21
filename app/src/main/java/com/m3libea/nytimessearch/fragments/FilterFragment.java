@@ -12,10 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.m3libea.nytimessearch.R;
+import com.m3libea.nytimessearch.models.SearchQuery;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -27,8 +29,14 @@ import butterknife.ButterKnife;
 public class FilterFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
 
     @BindView(R.id.tvDate) TextView tvDate;
+    @BindView(R.id.btnSave) Button btnSave;
 
     DateFormat df;
+
+    public interface FilterDialogListener{
+        void onFinishingFilter(String m);
+    }
+
     public FilterFragment() {
         // Required empty public constructor
     }
@@ -59,6 +67,14 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         tvDate.setText(df.format(Calendar.getInstance().getTime()));
 
         tvDate.setOnClickListener(v -> showDatePickerDialog(v));
+
+        btnSave.setOnClickListener(v -> {
+
+
+            FilterDialogListener listener = (FilterDialogListener) getActivity();
+            listener.onFinishingFilter("Test");
+            dismiss();
+        });
         super.onViewCreated(view, savedInstanceState);
     }
 

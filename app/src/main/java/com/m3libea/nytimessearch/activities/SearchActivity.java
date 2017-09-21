@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements FilterFragment.FilterDialogListener{
 
     @BindView(R.id.gvResults) GridView gvResults;
 
@@ -182,4 +182,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onFinishingFilter(String m) {
+        Toast.makeText(this, "Hi, " + m, Toast.LENGTH_SHORT).show();
+    }
 }
