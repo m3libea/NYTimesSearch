@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +16,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.m3libea.nytimessearch.NYTimesApplication;
-import com.m3libea.nytimessearch.api.NYTimesEndpoint;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.adapters.ArticleArrayAdapter;
+import com.m3libea.nytimessearch.api.NYTimesEndpoint;
 import com.m3libea.nytimessearch.external.EndlessScrollListener;
 import com.m3libea.nytimessearch.fragments.FilterFragment;
 import com.m3libea.nytimessearch.models.Doc;
@@ -85,7 +85,8 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                apiQuery(sQuery.getQuery(), page);
+                sQuery.setPage(page);
+                apiQuery();
 
                 return true;
             }
@@ -108,7 +109,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                 clearList();
 
                 sQuery.setQuery(query);
-                apiQuery(sQuery.getQuery(), sQuery.getPage());
+                apiQuery();
 
                 return true;
             }
@@ -145,16 +146,18 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         filterFragment.show(fm, "fragment_filter");
     }
 
-    public void apiQuery(String query, int page) {
+    public void apiQuery() {
 
         if (!isNetworkAvailable()) {
-            Toast.makeText(this, "Network not Available", Toast.LENGTH_SHORT).show();
+            Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.connection_error, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Retry", v -> apiQuery());
+            bar.show();
             return;
         }
 
 
         apiService.articleSearch(
-                page,
+                sQuery.getPage(),
                 sQuery.getQuery(),
                 sQuery.getFormattedDate(),
                 sQuery.getFormattedSort(),
@@ -168,9 +171,19 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                             articles.add(doc);
                             adapter.notifyDataSetChanged();
                         },
-                        throwable -> Log.e("SearchActivity", "failure getting doc", throwable),
+                        throwable -> processError(throwable),
                         () -> Log.i("SearchActivity", "done!!!")
                 );
+    }
+
+    private void processError(Throwable throwable) {
+
+        if (throwable.getMessage().contains("429")){;
+            Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.request_error, Snackbar.LENGTH_SHORT)
+                    .setAction("Retry", v -> apiQuery());
+            bar.show();
+        }
+        throwable.printStackTrace();
     }
 
     private Boolean isNetworkAvailable() {
@@ -194,7 +207,9 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         sQuery.setSort(q.getFormattedSort());
 
         clearList();
-        apiQuery(q.getQuery(), q.getPage());
-        Log.d("SearchQuery", String.format("Desks: %s Calendar: %s Sort: %s", q.getFormattedDesks(), q.getFormattedDate(), q.getFormattedSort()));
+        sQuery.setPage(0);
+        apiQuery();
     }
+
+
 }

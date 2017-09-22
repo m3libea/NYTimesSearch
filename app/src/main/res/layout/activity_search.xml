@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:id="@+id/activity_search"
     tools:context="com.m3libea.nytimessearch.activities.SearchActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -42,7 +43,6 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:verticalSpacing="0dp"
             android:numColumns="2" />
     </RelativeLayout>
 
