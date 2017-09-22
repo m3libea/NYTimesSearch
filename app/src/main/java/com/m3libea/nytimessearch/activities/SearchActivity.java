@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
     private NYTimesEndpoint apiService;
 
-    SearchQuery query;
+    SearchQuery sQuery;
     String queryS;
 
     @Override
@@ -56,10 +56,11 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        sQuery = new SearchQuery();
+
         apiService = ((NYTimesApplication)getApplication()).getRetrofit()
                 .create(NYTimesEndpoint.class);
 
-        query = new SearchQuery();
         setUpViews();
 
     }
@@ -86,7 +87,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                apiQuery(queryS, page);
+                apiQuery(sQuery.getQuery(), page);
 
                 return true;
             }
@@ -108,8 +109,8 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
                 clearList();
 
-                apiQuery(query, 0);
-                queryS = query;
+                sQuery.setQuery(query);
+                apiQuery(sQuery.getQuery(), sQuery.getPage());
 
                 return true;
             }
@@ -156,7 +157,10 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
         apiService.articleSearch(
                 page,
-                query,
+                sQuery.getQuery(),
+                sQuery.getFormattedDate(),
+                sQuery.getFormattedSort(),
+                sQuery.getFormattedDesks(),
                 Config.APIKEY)
                 .flatMapIterable(nyTimesResponse -> nyTimesResponse.getResponse().getDocs())
                 .subscribeOn(Schedulers.io())
@@ -187,6 +191,12 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
     @Override
     public void onFinishingFilter(SearchQuery q) {
+        sQuery.setNewsDesks(q.getNewsDesks());
+        sQuery.setBeginDate(q.getBeginDate());
+        sQuery.setSort(q.getFormattedSort());
+
+        clearList();
+        apiQuery(q.getQuery(), q.getPage());
         Log.d("SearchQuery", String.format("Desks: %s Calendar: %s Sort: %s", q.getFormattedDesks(), q.getFormattedDate(), q.getFormattedSort()));
     }
 }

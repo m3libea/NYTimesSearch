@@ -15,6 +15,9 @@ public interface NYTimesEndpoint {
     rx.Observable<NYTimesResponse> articleSearch(
             @Query("page") int page,
             @Query("q") String query,
+            @Query("begin_date") String beginDate,
+            @Query("sort") String sort,
+            @Query("fq") String filterQuery,
             @Query("api-key") String apiKey);
 
 }

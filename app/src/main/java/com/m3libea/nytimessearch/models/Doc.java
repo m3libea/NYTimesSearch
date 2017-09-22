@@ -10,8 +10,6 @@ import java.util.List;
 @Parcel
 public class Doc {
 
-    @SerializedName("web_url")
-    @Expose
     public String webUrl;
     @SerializedName("snippet")
     @Expose
@@ -42,7 +40,7 @@ public class Doc {
     @SerializedName("document_type")
     @Expose
     public String documentType;
-    @SerializedName("news_desk")
+    @SerializedName("new_desk")
     @Expose
     public String newsDesk;
     @SerializedName("section_name")

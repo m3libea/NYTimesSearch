@@ -27,6 +27,7 @@ public class ArticleArrayAdapter extends ArrayAdapter<Doc> {
 
     @BindView(R.id.ivimage) ImageView ivImage;
     @BindView(R.id.tvTitle) TextView tvTitle;
+    @BindView(R.id.tvDesks) TextView tvDesks;
 
 
     public ArticleArrayAdapter(Context context, List<Doc> articles){
@@ -51,13 +52,14 @@ public class ArticleArrayAdapter extends ArrayAdapter<Doc> {
         ivImage.setImageResource(0);
 
         tvTitle.setText(article.getHeadline().getMain());
+        tvDesks.setText(article.getNewsDesk());
 
         //populate thumbnail image
 
         String thumbnail = "";
 
         if (article.getMultimedia().size() > 0){
-            thumbnail = "http://www.nytimes.com/" + article.getMultimedia().get(1).getUrl();
+            thumbnail = "http://www.nytimes.com/" + article.getMultimedia().get(0).getUrl();
         }
 
         if(!TextUtils.isEmpty(thumbnail)){

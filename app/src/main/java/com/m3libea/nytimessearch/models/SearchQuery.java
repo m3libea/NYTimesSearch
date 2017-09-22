@@ -122,7 +122,7 @@ public class SearchQuery {
         }
 
         StringBuffer sb = new StringBuffer();
-        sb.append("new_desk:(");
+        sb.append("news_desk:(");
         sb.append(TextUtils.join(" ", aux));
         sb.append(")");
         return sb.toString();
