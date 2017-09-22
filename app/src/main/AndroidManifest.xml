@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".NYTimesApplication">
+
+        <meta-data android:name="NYT_API_KEY" android:value="7217c0ccb50a41d198c730e132230c0a" />
+
         <activity
             android:name=".activities.SearchActivity"
             android:label="@string/app_name"

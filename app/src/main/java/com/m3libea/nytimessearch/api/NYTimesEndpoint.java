@@ -1,4 +1,4 @@
-package com.m3libea.nytimessearch;
+package com.m3libea.nytimessearch.api;
 
 import com.m3libea.nytimessearch.models.NYTimesResponse;
 

@@ -17,9 +17,8 @@ import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.m3libea.nytimessearch.Config;
 import com.m3libea.nytimessearch.NYTimesApplication;
-import com.m3libea.nytimessearch.NYTimesEndpoint;
+import com.m3libea.nytimessearch.api.NYTimesEndpoint;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.adapters.ArticleArrayAdapter;
 import com.m3libea.nytimessearch.external.EndlessScrollListener;
@@ -46,7 +45,6 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     private NYTimesEndpoint apiService;
 
     SearchQuery sQuery;
-    String queryS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -161,7 +159,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                 sQuery.getFormattedDate(),
                 sQuery.getFormattedSort(),
                 sQuery.getFormattedDesks(),
-                Config.APIKEY)
+                NYTimesApplication.getApiKey())
                 .flatMapIterable(nyTimesResponse -> nyTimesResponse.getResponse().getDocs())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
