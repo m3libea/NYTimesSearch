@@ -20,7 +20,7 @@ public class SearchQuery {
     }
 
 
-    private String query;
+    private String query = null;
     private Date beginDate = null;
     private SortDir sort = null;
     private int page = 0;
@@ -32,6 +32,9 @@ public class SearchQuery {
         this.sort = sort;
         this.page = page;
         this.newsDesks = newsDesks;
+    }
+
+    public SearchQuery() {
     }
 
     public SearchQuery(String query) {
@@ -66,8 +69,14 @@ public class SearchQuery {
         this.beginDate = beginDate;
     }
 
-    public void setSort(SortDir sort) {
-        this.sort = sort;
+    public void setSort(String sort) {
+
+        switch(sort){
+            case "Newest":
+                this.sort = SortDir.NEWEST;
+            case "Oldest":
+                this.sort = SortDir.OLDEST;
+        }
     }
 
     public void setPage(int page) {
@@ -109,7 +118,7 @@ public class SearchQuery {
         List<String> aux = new ArrayList<>();
 
         for (String s: newsDesks){
-            aux.add("\"s\"");
+            aux.add("\"" + s + "\"");
         }
 
         StringBuffer sb = new StringBuffer();

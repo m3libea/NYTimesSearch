@@ -13,13 +13,16 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.models.SearchQuery;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -29,12 +32,18 @@ import butterknife.ButterKnife;
 public class FilterFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
 
     @BindView(R.id.tvDate) TextView tvDate;
+    @BindView(R.id.spinner) Spinner spinner;
     @BindView(R.id.btnSave) Button btnSave;
+    @BindView(R.id.checkbox_arts) CheckBox cbArts;
+    @BindView(R.id.checkbox_sports) CheckBox cbSports;
+    @BindView(R.id.checkbox_fashion) CheckBox cbfashion;
 
     DateFormat df;
 
+    Calendar cal = null;
+
     public interface FilterDialogListener{
-        void onFinishingFilter(String m);
+        void onFinishingFilter(SearchQuery query);
     }
 
     public FilterFragment() {
@@ -70,12 +79,42 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
         btnSave.setOnClickListener(v -> {
 
-
             FilterDialogListener listener = (FilterDialogListener) getActivity();
-            listener.onFinishingFilter("Test");
+            listener.onFinishingFilter(createSearchQuery());
             dismiss();
         });
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private SearchQuery createSearchQuery() {
+
+        SearchQuery query = new SearchQuery();
+
+        if (cal != null){
+            query.setBeginDate(cal.getTime());
+        }
+
+        query.setSort(spinner.getSelectedItem().toString());
+
+        ArrayList<String> desks = new ArrayList<>();
+
+        if (cbArts.isChecked()){
+            desks.add(getString(R.string.arts));
+        }
+
+        if (cbfashion.isChecked()){
+            desks.add(getString(R.string.fashion));
+        }
+
+        if (cbSports.isChecked()){
+            desks.add(getString(R.string.sports));
+        }
+
+        if (!desks.isEmpty()){
+            query.setNewsDesks(desks);
+        }
+
+        return query;
     }
 
     @Override
@@ -107,6 +146,8 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        cal = c;
 
         tvDate.setText(df.format(c.getTime()));
     }

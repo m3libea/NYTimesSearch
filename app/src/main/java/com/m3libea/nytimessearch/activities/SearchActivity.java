@@ -25,6 +25,7 @@ import com.m3libea.nytimessearch.adapters.ArticleArrayAdapter;
 import com.m3libea.nytimessearch.external.EndlessScrollListener;
 import com.m3libea.nytimessearch.fragments.FilterFragment;
 import com.m3libea.nytimessearch.models.Doc;
+import com.m3libea.nytimessearch.models.SearchQuery;
 
 import org.parceler.Parcels;
 
@@ -44,6 +45,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
     private NYTimesEndpoint apiService;
 
+    SearchQuery query;
     String queryS;
 
     @Override
@@ -57,6 +59,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         apiService = ((NYTimesApplication)getApplication()).getRetrofit()
                 .create(NYTimesEndpoint.class);
 
+        query = new SearchQuery();
         setUpViews();
 
     }
@@ -183,7 +186,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
 
     @Override
-    public void onFinishingFilter(String m) {
-        Toast.makeText(this, "Hi, " + m, Toast.LENGTH_SHORT).show();
+    public void onFinishingFilter(SearchQuery q) {
+        Log.d("SearchQuery", String.format("Desks: %s Calendar: %s Sort: %s", q.getFormattedDesks(), q.getFormattedDate(), q.getFormattedSort()));
     }
 }
