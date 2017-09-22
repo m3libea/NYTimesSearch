@@ -2,6 +2,8 @@ package com.m3libea.nytimessearch.models;
 
 import android.text.TextUtils;
 
+import org.parceler.Parcel;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,21 +12,22 @@ import java.util.List;
 /**
  * Created by m3libea on 9/20/17.
  */
-
+@Parcel
 public class SearchQuery {
 
 
-    private enum SortDir{
+
+    public enum SortDir{
         NEWEST,
         OLDEST
     }
 
 
-    private String query = null;
-    private Date beginDate = null;
-    private SortDir sort = null;
-    private int page = 0;
-    private List<String> newsDesks = null;
+    public String query = null;
+    public Date beginDate = null;
+    public SortDir sort = null;
+    public int page = 0;
+    public List<String> newsDesks = null;
 
     public SearchQuery(String query, Date beginDate, SortDir sort, int page, List<String> newsDesks) {
         this.query = query;
@@ -69,15 +72,17 @@ public class SearchQuery {
         this.beginDate = beginDate;
     }
 
-    public void setSort(String sort) {
-
-        switch(sort){
-            case "Newest":
-                this.sort = SortDir.NEWEST;
-            case "Oldest":
-                this.sort = SortDir.OLDEST;
-        }
+    public void setSort(SortDir sortDir) {
+        this.sort = sortDir;
     }
+
+    public void setSort(String s) {
+        if (s.equals("Newest"))
+            this.sort = SortDir.NEWEST;
+        else
+            this.sort = SortDir.OLDEST;
+    }
+
 
     public void setPage(int page) {
         this.page = page;

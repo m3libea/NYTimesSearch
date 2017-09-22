@@ -109,6 +109,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
                 clearList();
 
                 sQuery.setQuery(query);
+                sQuery.setPage(0);
                 apiQuery();
 
                 return true;
@@ -142,7 +143,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
     private void showFilterDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        FilterFragment filterFragment = FilterFragment.newInstance();
+        FilterFragment filterFragment = FilterFragment.newInstance(sQuery);
         filterFragment.show(fm, "fragment_filter");
     }
 
@@ -204,7 +205,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     public void onFinishingFilter(SearchQuery q) {
         sQuery.setNewsDesks(q.getNewsDesks());
         sQuery.setBeginDate(q.getBeginDate());
-        sQuery.setSort(q.getFormattedSort());
+        sQuery.setSort(q.getSort());
 
         clearList();
         sQuery.setPage(0);

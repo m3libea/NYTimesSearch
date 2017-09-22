@@ -21,12 +21,16 @@ import android.widget.TextView;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.models.SearchQuery;
 
+import org.parceler.Parcels;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.m3libea.nytimessearch.models.SearchQuery.SortDir.OLDEST;
 
 
 public class FilterFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
@@ -38,9 +42,11 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     @BindView(R.id.checkbox_sports) CheckBox cbSports;
     @BindView(R.id.checkbox_fashion) CheckBox cbfashion;
 
-    DateFormat df;
+    private DateFormat df;
 
-    Calendar cal = null;
+    private Calendar cal = null;
+
+    private SearchQuery sQuery;
 
     public interface FilterDialogListener{
         void onFinishingFilter(SearchQuery query);
@@ -50,8 +56,11 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         // Required empty public constructor
     }
 
-    public static FilterFragment newInstance() {
+    public static FilterFragment newInstance(SearchQuery query) {
         FilterFragment fragment = new FilterFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("query", Parcels.wrap(query));
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -60,6 +69,8 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+
+        sQuery = Parcels.unwrap(getArguments().getParcelable("query"));
 
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
 
@@ -73,28 +84,49 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        tvDate.setText(df.format(Calendar.getInstance().getTime()));
+        //Put the previous state if any
+        if(sQuery.getBeginDate() == null) {
+            tvDate.setText(df.format(Calendar.getInstance().getTime()));
+        }else{
+            tvDate.setText(df.format(sQuery.getBeginDate()));
+        }
 
         tvDate.setOnClickListener(v -> showDatePickerDialog(v));
 
-        btnSave.setOnClickListener(v -> {
+        //Set previous state to Sort spinner
+        if(sQuery.getSort() != null){
+            if(sQuery.getSort() == OLDEST)
+               spinner.setSelection(0);
+            else
+               spinner.setSelection(1);
 
-            FilterDialogListener listener = (FilterDialogListener) getActivity();
-            listener.onFinishingFilter(createSearchQuery());
-            dismiss();
-        });
+        }
+
+
+        if (sQuery.getNewsDesks() != null) {
+            for (String s : sQuery.getNewsDesks()) {
+                if (s.equals("Arts"))
+                    cbArts.setChecked(true);
+                else if (s.equals("Sports"))
+                    cbSports.setChecked(true);
+                else
+                    cbfashion.setChecked(true);
+            }
+        }
+
+        btnSave.setOnClickListener(v -> backToActivity());
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private SearchQuery createSearchQuery() {
+    private void backToActivity() {
+        FilterDialogListener listener = (FilterDialogListener) getActivity();
+        checkDesks();
+        sQuery.setSort(spinner.getSelectedItem().toString());
+        listener.onFinishingFilter(sQuery);
+        dismiss();
+    }
 
-        SearchQuery query = new SearchQuery();
-
-        if (cal != null){
-            query.setBeginDate(cal.getTime());
-        }
-
-        query.setSort(spinner.getSelectedItem().toString());
+    private void checkDesks() {
 
         ArrayList<String> desks = new ArrayList<>();
 
@@ -111,10 +143,10 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         }
 
         if (!desks.isEmpty()){
-            query.setNewsDesks(desks);
+            sQuery.setNewsDesks(desks);
+        }else{
+            sQuery.setNewsDesks(null);
         }
-
-        return query;
     }
 
     @Override
@@ -134,7 +166,7 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
     // attach to an onclick handler to show the date picker
     public void showDatePickerDialog(View v) {
-        DataPickerFragment newFragment = new DataPickerFragment();
+        DataPickerFragment newFragment = DataPickerFragment.newInstance(sQuery);
         newFragment.show(getChildFragmentManager(), "dataPicker");
     }
 
@@ -147,7 +179,7 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-        cal = c;
+        sQuery.setBeginDate(c.getTime());
 
         tvDate.setText(df.format(c.getTime()));
     }

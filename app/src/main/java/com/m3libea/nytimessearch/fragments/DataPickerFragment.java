@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
+import com.m3libea.nytimessearch.models.SearchQuery;
+
+import org.parceler.Parcels;
+
 import java.util.Calendar;
 
 /**
@@ -17,11 +21,25 @@ public class DataPickerFragment extends DialogFragment {
     public DataPickerFragment() {
     }
 
+    public static DataPickerFragment newInstance(SearchQuery sQuery){
+
+        DataPickerFragment fragment = new DataPickerFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("query", Parcels.wrap(sQuery));
+        fragment.setArguments(args);
+        return fragment;
+    }
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         final Calendar c = Calendar.getInstance();
+
+        SearchQuery query = Parcels.unwrap(getArguments().getParcelable("query"));
+
+        if (query.getBeginDate() != null){
+            c.setTime(query.getBeginDate());
+        }
 
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
