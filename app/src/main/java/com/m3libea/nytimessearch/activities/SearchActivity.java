@@ -21,6 +21,7 @@ import com.m3libea.nytimessearch.NYTimesApplication;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.adapters.ArticlesAdapter;
 import com.m3libea.nytimessearch.api.NYTimesEndpoint;
+import com.m3libea.nytimessearch.external.EndlessRecyclerViewScrollListener;
 import com.m3libea.nytimessearch.fragments.FilterFragment;
 import com.m3libea.nytimessearch.models.Doc;
 import com.m3libea.nytimessearch.models.SearchQuery;
@@ -37,12 +38,13 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     @BindView(R.id.rvArticles)
     RecyclerView rvArticles;
 
-    ArrayList<Doc> articles;
-    ArticlesAdapter adapter;
+    private ArrayList<Doc> articles;
+    private ArticlesAdapter adapter;
+    private EndlessRecyclerViewScrollListener listener;
 
     private NYTimesEndpoint apiService;
 
-    SearchQuery sQuery;
+    private SearchQuery sQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -70,18 +72,16 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         StaggeredGridLayoutManager gridLayoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         rvArticles.setLayoutManager(gridLayoutManager);
-        
-//
-//        gvResults.setOnScrollListener(new EndlessScrollListener(){
-//
-//            @Override
-//            public boolean onLoadMore(int page, int totalItemsCount) {
-//                sQuery.setPage(page);
-//                apiQuery();
-//
-//                return true;
-//            }
-//        });
+
+        listener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                sQuery.setPage(page);
+                apiQuery();
+            }
+        };
+
+        rvArticles.addOnScrollListener(listener);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     private void processError(Throwable throwable) {
 
         if (throwable.getMessage().contains("429")){;
-            Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.request_error, Snackbar.LENGTH_SHORT)
+            Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.request_error, Snackbar.LENGTH_LONG)
                     .setAction("Retry", v -> apiQuery());
             bar.show();
         }
@@ -189,17 +189,17 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
         int size = articles.size();
         articles.clear();
         adapter.notifyDataSetChanged();
+        listener.resetState();
     }
 
 
     @Override
     public void onFinishingFilter(SearchQuery q) {
-        sQuery.setNewsDesks(q.getNewsDesks());
-        sQuery.setBeginDate(q.getBeginDate());
-        sQuery.setSort(q.getSort());
+        q.setQuery(sQuery.getQuery());
+        sQuery = q;
+        sQuery.setPage(0);
 
         clearList();
-        sQuery.setPage(0);
         apiQuery();
     }
 
