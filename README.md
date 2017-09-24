@@ -2,6 +2,8 @@
 
 Android app that allows a user to search for articles on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
+Time spent: **40** hours spent in total
+
 ## User Stories
 
 The following **required** functionality is completed:
@@ -38,7 +40,8 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [ ] Palette library to get the dominant color from images on cardviews.
+* [ ] 
 
 ## Video Walkthrough
 
@@ -59,6 +62,7 @@ Describe any challenges encountered while building the app.
 - [GSON library](http://guides.codepath.com/android/Using-Android-Async-Http-Client#decoding-with-gson-library)
 - [Retrofit networking library](http://guides.codepath.com/android/Consuming-APIs-with-Retrofit)
 - [Stetho](http://facebook.github.io/stetho/)
+- [Palette support Library](https://developer.android.com/reference/android/support/v7/graphics/Palette.html)
 
 ## License
 

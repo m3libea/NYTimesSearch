@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.m3libea.nytimessearch.R;
 import com.m3libea.nytimessearch.models.Doc;
 
@@ -47,7 +50,37 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             super.bind(article);
             String thumbnail = "http://www.nytimes.com/" + article.getMultimedia().get(0).getUrl();
 
-            Glide.with(context).load(thumbnail).into(ivImage);
+            Glide.with(context)
+                    .load(thumbnail)
+                    .asBitmap()
+                    .listener(new RequestListener<String, Bitmap>() {
+
+                        @Override
+                        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
+                            onPalette(Palette.from(resource).generate());
+                            ivImage.setImageBitmap(resource);
+
+                            return false;
+                        }
+
+                        public void onPalette(Palette palette) {
+                            if (null != palette) {
+                                Palette.Swatch swatch = palette.getDominantSwatch();
+                                card.setCardBackgroundColor(swatch.getRgb());
+                                tvTitle.setTextColor(swatch.getTitleTextColor());
+                                tvSnippet.setTextColor(swatch.getTitleTextColor());
+                                tvDesks.setBackgroundColor(swatch.getTitleTextColor());
+                                tvDesks.setTextColor(swatch.getRgb());
+
+                            }
+                        }
+                    }).into(ivImage);
 
         }
     }
