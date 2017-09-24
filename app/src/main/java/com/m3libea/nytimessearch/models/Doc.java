@@ -22,7 +22,7 @@ public class Doc {
     public String _abstract;
     @SerializedName("print_page")
     @Expose
-    public int printPage;
+    public String printPage;
     @Expose
     public String source;
     @SerializedName("multimedia")
@@ -100,11 +100,11 @@ public class Doc {
         this._abstract = _abstract;
     }
 
-    public int getPrintPage() {
+    public String getPrintPage() {
         return printPage;
     }
 
-    public void setPrintPage(int printPage) {
+    public void setPrintPage(String printPage) {
         this.printPage = printPage;
     }
 
