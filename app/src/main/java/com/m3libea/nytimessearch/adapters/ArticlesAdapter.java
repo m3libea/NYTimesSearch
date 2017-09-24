@@ -39,8 +39,11 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         TextView tvTitle;
         @BindView(R.id.tvDesks)
         TextView tvDesks;
+        @BindView(R.id.tvSnippet)
+        TextView tvSnippet;
         @BindView(R.id.card)
         CardView card;
+
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -51,6 +54,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void bind(final Doc article){
             tvTitle.setText(article.getHeadline().getMain());
             tvDesks.setText(article.getNewsDesk());
+            tvSnippet.setText(article.getSnippet());
 
             String thumbnail = "http://www.nytimes.com/" + article.getMultimedia().get(0).getUrl();
 
@@ -92,6 +96,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         TextView tvTitle;
         @BindView(R.id.tvDesks)
         TextView tvDesks;
+        @BindView(R.id.tvSnippet)
+        TextView tvSnippet;
         @BindView(R.id.card)
         CardView card;
 
@@ -104,7 +110,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void bind(final Doc article){
             tvTitle.setText(article.getHeadline().getMain());
             tvDesks.setText(article.getNewsDesk());
-
+            tvSnippet.setText(article.getSnippet());
 
             card.setOnClickListener(view -> {
                 String url = article.getWebUrl();
