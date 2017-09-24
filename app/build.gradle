@@ -23,6 +23,9 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -62,9 +65,11 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.4.1'
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.1'
 
-    //ReciclerView
+    //RecyclerView
 
     compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'jp.wasabeef:recyclerview-animators:2.2.3'
+
 
     //ChromeTab
 

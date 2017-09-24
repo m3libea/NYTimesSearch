@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -56,8 +58,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
         sQuery = new SearchQuery();
 
-        apiService = ((NYTimesApplication)getApplication()).getRetrofit()
-                .create(NYTimesEndpoint.class);
+        apiService = ((NYTimesApplication)getApplication()).getApiService();
 
         setUpViews();
 
@@ -77,10 +78,14 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 sQuery.setPage(page);
-                apiQuery();
+
+                final Runnable r = () -> apiQuery();
+                Handler handler = new Handler();
+                handler.postDelayed(r, 1000);
             }
         };
 
+        rvArticles.setItemAnimator(new SlideInUpAnimator());
         rvArticles.addOnScrollListener(listener);
     }
 

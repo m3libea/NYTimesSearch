@@ -10,6 +10,7 @@ import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.m3libea.nytimessearch.api.NYTimesEndpoint;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -24,10 +25,7 @@ import rx.schedulers.Schedulers;
 public class NYTimesApplication extends Application {
 
     private Retrofit retrofit;
-    public Retrofit getRetrofit() {
-        return retrofit;
-    }
-
+    private NYTimesEndpoint apiService;
     private final String APIBASE = "http://api.nytimes.com";
     private static String API_KEY;
     private final String TAG = "NTYApplication";
@@ -55,6 +53,8 @@ public class NYTimesApplication extends Application {
                 .addCallAdapterFactory(rxNYAdapter)
                 .build();
 
+        apiService = getRetrofit().create(NYTimesEndpoint.class);
+
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = ai.metaData;
@@ -69,5 +69,12 @@ public class NYTimesApplication extends Application {
 
     public static String getApiKey() {
         return API_KEY;
+    }
+
+    public NYTimesEndpoint getApiService() {
+        return apiService;
+    }
+    public Retrofit getRetrofit() {
+        return retrofit;
     }
 }
