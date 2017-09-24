@@ -186,7 +186,6 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     }
 
     private void clearList() {
-        int size = articles.size();
         articles.clear();
         adapter.notifyDataSetChanged();
         listener.resetState();

@@ -30,7 +30,7 @@ import java.util.Calendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.m3libea.nytimessearch.models.SearchQuery.SortDir.OLDEST;
+import static com.m3libea.nytimessearch.models.SearchQuery.SortDir.NEWEST;
 
 
 public class FilterFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener  {
@@ -95,7 +95,7 @@ public class FilterFragment extends DialogFragment implements DatePickerDialog.O
 
         //Set previous state to Sort spinner
         if(sQuery.getSort() != null){
-            if(sQuery.getSort() == OLDEST)
+            if(sQuery.getSort() == NEWEST)
                spinner.setSelection(0);
             else
                spinner.setSelection(1);
