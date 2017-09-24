@@ -1,7 +1,6 @@
 package com.m3libea.nytimessearch.activities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -9,24 +8,22 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.GridView;
 
 import com.m3libea.nytimessearch.NYTimesApplication;
 import com.m3libea.nytimessearch.R;
-import com.m3libea.nytimessearch.adapters.ArticleArrayAdapter;
+import com.m3libea.nytimessearch.adapters.ArticlesAdapter;
 import com.m3libea.nytimessearch.api.NYTimesEndpoint;
-import com.m3libea.nytimessearch.external.EndlessScrollListener;
 import com.m3libea.nytimessearch.fragments.FilterFragment;
 import com.m3libea.nytimessearch.models.Doc;
 import com.m3libea.nytimessearch.models.SearchQuery;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -37,10 +34,11 @@ import rx.schedulers.Schedulers;
 
 public class SearchActivity extends AppCompatActivity implements FilterFragment.FilterDialogListener{
 
-    @BindView(R.id.gvResults) GridView gvResults;
+    @BindView(R.id.rvArticles)
+    RecyclerView rvArticles;
 
     ArrayList<Doc> articles;
-    ArticleArrayAdapter adapter;
+    ArticlesAdapter adapter;
 
     private NYTimesEndpoint apiService;
 
@@ -66,31 +64,24 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     public void setUpViews(){
         ButterKnife.bind(this);
         articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        gvResults.setAdapter(adapter);
+        adapter = new ArticlesAdapter(this, articles);
+        rvArticles.setAdapter(adapter);
 
-        gvResults.setOnItemClickListener((parent, view, position, id) -> {
-            //Create intent
-            Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-            //get article to display
-
-            Doc doc = articles.get(position);
-            //pass in that article into intent
-            i.putExtra("article", Parcels.wrap(doc));
-            //launch activity
-            startActivity(i);
-        });
-
-        gvResults.setOnScrollListener(new EndlessScrollListener(){
-
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                sQuery.setPage(page);
-                apiQuery();
-
-                return true;
-            }
-        });
+        StaggeredGridLayoutManager gridLayoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        rvArticles.setLayoutManager(gridLayoutManager);
+        
+//
+//        gvResults.setOnScrollListener(new EndlessScrollListener(){
+//
+//            @Override
+//            public boolean onLoadMore(int page, int totalItemsCount) {
+//                sQuery.setPage(page);
+//                apiQuery();
+//
+//                return true;
+//            }
+//        });
     }
 
     @Override

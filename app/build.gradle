@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.m3libea.nytimessearch"
@@ -46,7 +46,7 @@ dependencies {
 
     //Glide
     compile 'com.github.bumptech.glide:glide:3.5.2'
-    compile 'com.android.support:support-v4:24.0.0'
+    compile 'com.android.support:support-v4:25.0.0'
 
     //Retrofit
     compile 'com.google.code.gson:gson:2.7'
@@ -61,6 +61,10 @@ dependencies {
 
     compile 'com.facebook.stetho:stetho:1.4.1'
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.1'
+
+    //ReciclerView
+
+    compile 'com.android.support:recyclerview-v7:25.3.1'
 
 }
 
