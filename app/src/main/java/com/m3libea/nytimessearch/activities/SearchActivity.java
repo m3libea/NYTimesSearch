@@ -171,7 +171,7 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
     private void processError(Throwable throwable) {
 
         if (throwable.getMessage().contains("429")){;
-            Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.request_error, Snackbar.LENGTH_LONG)
+            Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.request_error, Snackbar.LENGTH_INDEFINITE)
                     .setAction("Retry", v -> apiQuery());
             bar.show();
         }

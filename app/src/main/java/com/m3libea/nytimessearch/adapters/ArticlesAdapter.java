@@ -31,19 +31,10 @@ import butterknife.ButterKnife;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder{
+    public class ImageViewHolder extends ArticlesAdapter.ViewHolder{
 
-       @BindView(R.id.ivimage)
+        @BindView(R.id.ivimage)
         ImageView ivImage;
-        @BindView(R.id.tvTitle)
-        TextView tvTitle;
-        @BindView(R.id.tvDesks)
-        TextView tvDesks;
-        @BindView(R.id.tvSnippet)
-        TextView tvSnippet;
-        @BindView(R.id.card)
-        CardView card;
-
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -51,46 +42,18 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ButterKnife.bind(this, itemView);
         }
 
+        @Override
         public void bind(final Doc article){
-            tvTitle.setText(article.getHeadline().getMain());
-            tvDesks.setText(article.getNewsDesk());
-            tvSnippet.setText(article.getSnippet());
-
+            super.bind(article);
             String thumbnail = "http://www.nytimes.com/" + article.getMultimedia().get(0).getUrl();
 
             Glide.with(context).load(thumbnail).into(ivImage);
 
-            card.setOnClickListener(view -> {
-
-                String url = article.getWebUrl();
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                // set toolbar color and/or setting custom actions before invoking build()
-                builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
-                builder.addDefaultShareMenuItem();
-
-                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_share);
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, url);
-
-                int requestCode = 100;
-
-                PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                        requestCode,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-                builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
-
-
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(context, Uri.parse(url));
-            });
         }
     }
 
 
-    public class TitleViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
         @BindView(R.id.tvTitle)
         TextView tvTitle;
@@ -101,7 +64,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.card)
         CardView card;
 
-        public TitleViewHolder(View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);
@@ -109,32 +72,48 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         public void bind(final Doc article){
             tvTitle.setText(article.getHeadline().getMain());
-            tvDesks.setText(article.getNewsDesk());
-            tvSnippet.setText(article.getSnippet());
+
+            String desks = article.getNewsDesk();
+            String snippet = article.getSnippet();
+            if (desks != null && !desks.isEmpty() && !desks.equals("None")){
+                tvDesks.setText(desks);
+            }else{
+                tvDesks.setVisibility(View.GONE);
+            }
+            if (snippet != null && !snippet.isEmpty()) {
+                tvSnippet.setText(snippet);
+            }else{
+                tvSnippet.setVisibility(View.GONE);
+            }
 
             card.setOnClickListener(view -> {
                 String url = article.getWebUrl();
-                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                // set toolbar color and/or setting custom actions before invoking build()
-                builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
-                builder.addDefaultShareMenuItem();
 
-                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_share);
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, url);
-
-                int requestCode = 100;
-
-                PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                        requestCode,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-                builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
-                CustomTabsIntent customTabsIntent = builder.build();
-                customTabsIntent.launchUrl(context, Uri.parse(url));
+                setChromeTab(url);
             });
+        }
+
+        public void setChromeTab(String url){
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            // set toolbar color and/or setting custom actions before invoking build()
+            builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            builder.addDefaultShareMenuItem();
+
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_share);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, url);
+
+            int requestCode = 100;
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(context,
+                    requestCode,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(context, Uri.parse(url));
         }
     }
 
@@ -149,10 +128,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.context = context;
     }
 
-    private Context getContext() {
-        return context;
-    }
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -165,7 +140,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 // Inflate the custom layout
                 View titleView = inflater.inflate(R.layout.item_article_result_title, parent, false);
                 // Return a new holder instance
-                viewHolder = new TitleViewHolder(titleView);
+                viewHolder = new ViewHolder(titleView);
                 break;
             default:
                 // Inflate the custom layout
@@ -185,7 +160,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         switch (holder.getItemViewType()){
             case TITLE:
-                TitleViewHolder tHolder = (TitleViewHolder) holder;
+                ViewHolder tHolder = (ViewHolder) holder;
                 tHolder.bind(article);
                 break;
             default:
