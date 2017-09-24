@@ -10,6 +10,8 @@ import java.util.List;
 @Parcel
 public class Doc {
 
+    @SerializedName("web_url")
+    @Expose
     public String webUrl;
     @SerializedName("snippet")
     @Expose

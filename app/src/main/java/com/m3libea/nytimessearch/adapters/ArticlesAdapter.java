@@ -1,7 +1,13 @@
 package com.m3libea.nytimessearch.adapters;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,12 +18,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.m3libea.nytimessearch.R;
-import com.m3libea.nytimessearch.activities.ArticleActivity;
 import com.m3libea.nytimessearch.models.Doc;
 
-import org.parceler.Parcels;
-
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by m3libea on 9/23/17.
@@ -27,22 +33,19 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public class ImageViewHolder extends RecyclerView.ViewHolder{
 
-       //@BindView(R.id.ivimage)
+       @BindView(R.id.ivimage)
         ImageView ivImage;
-        //@BindView(tvTitle)
+        @BindView(R.id.tvTitle)
         TextView tvTitle;
-        //@BindView(tvDesks)
+        @BindView(R.id.tvDesks)
         TextView tvDesks;
-
+        @BindView(R.id.card)
         CardView card;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
 
-            ivImage = (ImageView) itemView.findViewById(R.id.ivimage);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
-            tvDesks = (TextView) itemView.findViewById(R.id.tvDesks);
-            card = (CardView) itemView.findViewById(R.id.card);
+            ButterKnife.bind(this, itemView);
         }
 
         public void bind(final Doc article){
@@ -54,12 +57,30 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Glide.with(context).load(thumbnail).into(ivImage);
 
             card.setOnClickListener(view -> {
-                //Create intent
-                Intent i = new Intent(context, ArticleActivity.class);
-                //pass in that article into intent
-                i.putExtra("article", Parcels.wrap(article));
-                //launch activity
-                context.startActivity(i);
+
+                String url = article.getWebUrl();
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                // set toolbar color and/or setting custom actions before invoking build()
+                builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                builder.addDefaultShareMenuItem();
+
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_share);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, url);
+
+                int requestCode = 100;
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(context,
+                        requestCode,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
+
+
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(context, Uri.parse(url));
             });
         }
     }
@@ -67,19 +88,17 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public class TitleViewHolder extends RecyclerView.ViewHolder{
 
-        //@BindView(tvTitle)
+        @BindView(R.id.tvTitle)
         TextView tvTitle;
-        //@BindView(tvDesks)
+        @BindView(R.id.tvDesks)
         TextView tvDesks;
-
+        @BindView(R.id.card)
         CardView card;
 
         public TitleViewHolder(View itemView) {
             super(itemView);
 
-            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
-            tvDesks = (TextView) itemView.findViewById(R.id.tvDesks);
-            card = (CardView) itemView.findViewById(R.id.card);
+            ButterKnife.bind(this, itemView);
         }
 
         public void bind(final Doc article){
@@ -88,12 +107,27 @@ public class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
             card.setOnClickListener(view -> {
-                //Create intent
-                Intent i = new Intent(context, ArticleActivity.class);
-                //pass in that article into intent
-                i.putExtra("article", Parcels.wrap(article));
-                //launch activity
-                context.startActivity(i);
+                String url = article.getWebUrl();
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                // set toolbar color and/or setting custom actions before invoking build()
+                builder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                builder.addDefaultShareMenuItem();
+
+                Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_share);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, url);
+
+                int requestCode = 100;
+
+                PendingIntent pendingIntent = PendingIntent.getActivity(context,
+                        requestCode,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+                builder.setActionButton(bitmap, "Share Link", pendingIntent, true);
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(context, Uri.parse(url));
             });
         }
     }
