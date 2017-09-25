@@ -40,7 +40,7 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] Palette library to get the dominant color from images on cardviews.
+* [X] Palette library to get the dominant color from images on cardviews.
 
 ## Video Walkthrough
 
