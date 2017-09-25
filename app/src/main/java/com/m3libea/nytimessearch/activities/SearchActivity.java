@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -175,10 +176,13 @@ public class SearchActivity extends AppCompatActivity implements FilterFragment.
 
     private void processError(Throwable throwable) {
 
-        if (throwable.getMessage().contains("429")){;
-            Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.request_error, Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Retry", v -> apiQuery());
-            bar.show();
+        if (throwable instanceof HttpException) {
+            HttpException exception = (HttpException) throwable;
+            if (exception.code() == 429) {
+                Snackbar bar = Snackbar.make(findViewById(R.id.activity_search), R.string.request_error, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry", v -> apiQuery());
+                bar.show();
+            }
         }
         throwable.printStackTrace();
     }

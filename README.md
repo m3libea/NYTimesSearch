@@ -41,13 +41,12 @@ The following **bonus** features are implemented:
 The following **additional** features are implemented:
 
 * [ ] Palette library to get the dominant color from images on cardviews.
-* [ ] 
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://i.imgur.com/ZaMZXZY.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
